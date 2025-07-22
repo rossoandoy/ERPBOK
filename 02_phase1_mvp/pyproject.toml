@@ -1,0 +1,231 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "erpfts-phase1"
+version = "1.0.0"
+description = "ERP Fit To Standard - Phase1 MVP Knowledge RAG System"
+authors = [
+    {name = "ERPFTS Development Team", email = "dev@erpfts.local"}
+]
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.11"
+keywords = ["ERP", "RAG", "Knowledge Management", "AI", "Standards"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Enterprise",
+    "Topic :: Office/Business :: Enterprise Resource Planning",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+
+dependencies = [
+    # Core Framework
+    "fastapi>=0.104.0",
+    "streamlit>=1.28.0",
+    "uvicorn[standard]>=0.24.0",
+    
+    # Data Validation & Models
+    "pydantic>=2.5.0",
+    "pydantic-settings>=2.1.0",
+    
+    # Database & ORM
+    "sqlalchemy>=2.0.0",
+    "alembic>=1.12.0",
+    "sqlite-utils>=3.35.0",
+    
+    # Vector Database & Embeddings
+    "chromadb>=0.4.0",
+    "sentence-transformers>=2.2.0",
+    
+    # Document Processing
+    "pypdf>=3.17.0",
+    "pdfplumber>=0.9.0",
+    "python-docx>=0.8.11",
+    "beautifulsoup4>=4.12.0",
+    "feedparser>=6.0.0",
+    
+    # Text Processing & NLP
+    "spacy>=3.7.0",
+    "langdetect>=1.0.9",
+    "tiktoken>=0.5.0",
+    
+    # HTTP & Web Scraping
+    "httpx>=0.25.0",
+    "requests>=2.31.0",
+    "aiofiles>=23.2.0",
+    
+    # Utilities
+    "python-multipart>=0.0.6",
+    "python-jose[cryptography]>=3.3.0",
+    "passlib[bcrypt]>=1.7.4",
+    "python-dotenv>=1.0.0",
+    "rich>=13.7.0",
+    "loguru>=0.7.2",
+    
+    # Date & Time
+    "python-dateutil>=2.8.2",
+    "pytz>=2023.3",
+]
+
+[project.optional-dependencies]
+dev = [
+    # Testing Framework (TDD Support)
+    "pytest>=7.4.0",
+    "pytest-asyncio>=0.21.0",
+    "pytest-cov>=4.1.0",
+    "pytest-mock>=3.12.0",
+    "pytest-xdist>=3.3.0",  # parallel test execution
+    "pytest-html>=4.1.0",   # HTML test reports
+    "pytest-testmon>=2.0.0", # smart test selection
+    "pytest-watch>=4.2.0",   # continuous testing
+    "httpx>=0.25.0",         # FastAPI testing
+    "factory-boy>=3.3.0",    # test data generation
+    "freezegun>=1.2.0",      # time mocking
+    
+    # Code Quality & TDD Tools
+    "black>=23.9.0",
+    "isort>=5.12.0",
+    "flake8>=6.1.0",
+    "mypy>=1.7.0",
+    "pre-commit>=3.5.0",
+    "coverage>=7.3.0",      # coverage analysis
+    
+    # Documentation
+    "mkdocs>=1.5.0",
+    "mkdocs-material>=9.4.0",
+    
+    # Development Tools
+    "ipython>=8.17.0",
+    "jupyter>=1.0.0",
+]
+
+prod = [
+    # Production Monitoring
+    "prometheus-client>=0.19.0",
+    "opentelemetry-api>=1.21.0",
+    "opentelemetry-sdk>=1.21.0",
+    
+    # Production Database (if needed)
+    "psycopg2-binary>=2.9.9",  # PostgreSQL support
+]
+
+[project.urls]
+Homepage = "https://github.com/your-org/erpfts"
+Documentation = "https://docs.erpfts.local"
+Repository = "https://github.com/your-org/erpfts"
+Issues = "https://github.com/your-org/erpfts/issues"
+
+[project.scripts]
+erpfts-api = "erpfts.api.main:run_server"
+erpfts-ui = "erpfts.ui.main:run_app"
+erpfts-cli = "erpfts.cli.main:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+"*" = ["*.yaml", "*.yml", "*.json", "*.sql", "*.md"]
+
+# Black Configuration
+[tool.black]
+line-length = 100
+target-version = ['py311']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+    \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | _build
+  | buck-out
+  | build
+  | dist
+)/
+'''
+
+# isort Configuration
+[tool.isort]
+profile = "black"
+line_length = 100
+multi_line_output = 3
+include_trailing_comma = true
+force_grid_wrap = 0
+use_parentheses = true
+ensure_newline_before_comments = true
+
+# MyPy Configuration
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_unreachable = true
+strict_optional = true
+
+[[tool.mypy.overrides]]
+module = [
+    "chromadb.*",
+    "sentence_transformers.*",
+    "spacy.*",
+    "streamlit.*",
+    "feedparser.*",
+]
+ignore_missing_imports = true
+
+# Pytest Configuration (TDD Optimized)
+[tool.pytest.ini_options]
+minversion = "7.0"
+addopts = "-ra -q --strict-markers --strict-config --cov=src --cov-report=term-missing --cov-report=html --cov-fail-under=85"
+testpaths = ["tests"]
+filterwarnings = [
+    "error",
+    "ignore::UserWarning",
+    "ignore::DeprecationWarning",
+]
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "integration: marks tests as integration tests", 
+    "unit: marks tests as unit tests",
+    "e2e: marks tests as end-to-end tests",
+    "tdd: marks tests written in TDD style",
+    "red: marks tests in RED phase (should fail)",
+    "green: marks tests in GREEN phase (minimal implementation)",
+    "refactor: marks tests for REFACTOR phase (quality improvement)",
+]
+
+# Coverage Configuration
+[tool.coverage.run]
+source = ["src"]
+omit = [
+    "*/tests/*",
+    "*/test_*.py",
+    "*/__pycache__/*",
+    "*/migrations/*",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self.debug:",
+    "if settings.DEBUG",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if 0:",
+    "if __name__ == .__main__.:",
+    "class .*\\bProtocol\\):",
+    "@(abc\\.)?abstractmethod",
+]
